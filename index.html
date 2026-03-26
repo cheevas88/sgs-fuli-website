@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三國殺名將福利服 — 立即預約</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #110000;
+            font-family: 'Microsoft JhengHei', '微軟正黑體', '蘋方-繁', serif;
+            overflow-x: hidden;
+        }
+
+        /* Background */
+        .bg-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            z-index: 0;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(0,0,0,0.15) 0%,
+                rgba(0,0,0,0.35) 60%,
+                rgba(0,0,0,0.65) 100%
+            );
+            z-index: 1;
+        }
+
+        /* Content */
+        .content {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 24px 20px 52px;
+            text-align: center;
+        }
+
+        .logo {
+            width: 88%;
+            max-width: 420px;
+            filter: drop-shadow(0 0 24px rgba(255, 80, 0, 0.9));
+            animation: float 3.5s ease-in-out infinite;
+            margin-bottom: 8px;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-12px); }
+        }
+
+        .slogan {
+            color: #FFD700;
+            font-size: clamp(1rem, 4.5vw, 1.35rem);
+            font-weight: bold;
+            text-shadow: 0 0 12px rgba(255,140,0,0.9), 2px 2px 5px rgba(0,0,0,0.9);
+            letter-spacing: 0.08em;
+            margin-bottom: 6px;
+        }
+
+        .sub-slogan {
+            color: #FFE9A0;
+            font-size: clamp(0.82rem, 3.5vw, 1rem);
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.95);
+            margin-bottom: 28px;
+        }
+
+        /* Buttons */
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .btn {
+            padding: 15px 20px;
+            font-size: clamp(0.95rem, 3.8vw, 1.1rem);
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: transform 0.18s, box-shadow 0.18s;
+            line-height: 1.3;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-region {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: normal;
+            letter-spacing: 0.06em;
+            margin-bottom: 3px;
+            opacity: 0.88;
+        }
+
+        /* WeChat — red */
+        .btn-wechat {
+            background: linear-gradient(180deg, #C80000 0%, #8B0000 100%);
+            color: #FFD700;
+            border: 2px solid #FFD700;
+            box-shadow: 0 0 18px rgba(200,0,0,0.55), inset 0 1px 0 rgba(255,220,100,0.25);
+        }
+
+        .btn-wechat:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px rgba(255,50,0,0.7), inset 0 1px 0 rgba(255,220,100,0.35);
+        }
+
+        /* LINE — gold/dark */
+        .btn-line {
+            background: linear-gradient(180deg, #7a5500 0%, #4a3000 100%);
+            color: #FFD700;
+            border: 2px solid #C8962A;
+            box-shadow: 0 0 12px rgba(180,120,0,0.4);
+        }
+
+        .btn-line:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 22px rgba(220,160,0,0.6);
+        }
+
+        /* ─── Modals ─── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.78);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: linear-gradient(180deg, #2d0000 0%, #180000 100%);
+            border: 2px solid #FFD700;
+            border-radius: 8px;
+            padding: 30px 22px 24px;
+            text-align: center;
+            width: 100%;
+            max-width: 310px;
+            box-shadow: 0 0 40px rgba(255,130,0,0.35);
+        }
+
+        .modal-title {
+            color: #FFD700;
+            font-size: 1.15rem;
+            font-weight: bold;
+            margin-bottom: 14px;
+            text-shadow: 0 0 8px rgba(255,160,0,0.7);
+        }
+
+        .modal-body {
+            color: #FFE9A0;
+            font-size: 0.92rem;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+
+        .wechat-id-box {
+            display: block;
+            background: rgba(255,215,0,0.08);
+            border: 1px solid #FFD700;
+            border-radius: 4px;
+            padding: 10px 14px;
+            color: #FFD700;
+            font-size: 1.25rem;
+            font-weight: bold;
+            letter-spacing: 0.12em;
+            margin-bottom: 6px;
+        }
+
+        .copy-feedback {
+            height: 20px;
+            font-size: 0.82rem;
+            color: #6EE06E;
+            margin-bottom: 12px;
+        }
+
+        .btn-modal-primary {
+            width: 100%;
+            padding: 11px;
+            background: linear-gradient(180deg, #C80000, #8B0000);
+            color: #FFD700;
+            border: 1px solid #FFD700;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: opacity 0.15s;
+        }
+
+        .btn-modal-primary:hover { opacity: 0.88; }
+
+        .btn-modal-close {
+            width: 100%;
+            padding: 9px;
+            background: transparent;
+            color: #888;
+            border: 1px solid #555;
+            border-radius: 4px;
+            font-size: 0.88rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: color 0.15s;
+        }
+
+        .btn-modal-close:hover { color: #bbb; }
+
+        /* LINE coming-soon badge */
+        .coming-soon {
+            display: inline-block;
+            font-size: 0.75rem;
+            background: rgba(255,215,0,0.15);
+            border: 1px solid #C8962A;
+            border-radius: 3px;
+            padding: 2px 8px;
+            color: #FFD700;
+            margin-bottom: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <img class="bg-image" src="assets/image1.png" alt="三國殺名將福利服">
+    <div class="overlay"></div>
+
+    <div class="content">
+        <img class="logo" src="assets/image2.png" alt="三國殺名將福利服 Logo">
+        <div class="slogan">預約就送貴族15 ＋ 神趙雲</div>
+        <div class="sub-slogan">立即加入，開啟三國霸業！</div>
+
+        <div class="buttons">
+            <button class="btn btn-wechat" onclick="openModal('wechatModal')">
+                <span class="btn-region">🇸🇬 新馬玩家</span>
+                加入微信預約群
+            </button>
+            <button class="btn btn-line" onclick="openModal('lineModal')">
+                <span class="btn-region">🇹🇼 台灣玩家</span>
+                加入 LINE 預約群
+            </button>
+        </div>
+    </div>
+
+    <!-- WeChat Modal -->
+    <div class="modal-overlay" id="wechatModal" onclick="overlayClick(event)">
+        <div class="modal">
+            <div class="modal-title">加入微信預約群</div>
+            <div class="modal-body">
+                請複製以下微信號，加客服好友後即可進入福利群！
+            </div>
+            <span class="wechat-id-box">youxikf777</span>
+            <div class="copy-feedback" id="copyFeedback"></div>
+            <button class="btn-modal-primary" onclick="copyWechat()">複製微信號</button>
+            <button class="btn-modal-close" onclick="closeModal('wechatModal')">關閉</button>
+        </div>
+    </div>
+
+    <!-- LINE Modal -->
+    <div class="modal-overlay" id="lineModal" onclick="overlayClick(event)">
+        <div class="modal">
+            <div class="modal-title">台灣玩家 LINE 群</div>
+            <span class="coming-soon">即將開放</span>
+            <div class="modal-body">
+                LINE 群連結即將上線，<br>敬請期待！
+            </div>
+            <button class="btn-modal-close" onclick="closeModal('lineModal')">關閉</button>
+        </div>
+    </div>
+
+    <script>
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            if (id === 'wechatModal') {
+                document.getElementById('copyFeedback').textContent = '';
+            }
+        }
+
+        function overlayClick(e) {
+            if (e.target.classList.contains('modal-overlay')) {
+                e.target.classList.remove('active');
+            }
+        }
+
+        function copyWechat() {
+            const id = 'youxikf777';
+            const feedback = document.getElementById('copyFeedback');
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(id).then(() => showCopied(feedback));
+            } else {
+                const el = document.createElement('textarea');
+                el.value = id;
+                el.style.position = 'fixed';
+                el.style.opacity = '0';
+                document.body.appendChild(el);
+                el.focus();
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+                showCopied(feedback);
+            }
+        }
+
+        function showCopied(el) {
+            el.textContent = '✓ 已複製！';
+            setTimeout(() => { el.textContent = ''; }, 2500);
+        }
+    </script>
+
+</body>
+</html>
